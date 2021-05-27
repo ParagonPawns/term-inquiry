@@ -1,11 +1,16 @@
-
-pub struct List<T> {
+struct Item<T> {
     message: String,
-    selection_list: Vec<(String, T)>,
+    value: T,
+    selected: bool,
+}
+
+pub struct CheckboxList<T> {
+    message: String,
+    selection_list: Vec<Item<T>>,
     term_data: TermData,
 }
 
-impl<T> List<T> {
+impl<T> CheckboxList<T> {
     pub fn new(message: String) -> Self {
         Self {
             message,
@@ -15,11 +20,17 @@ impl<T> List<T> {
     }
 
     pub fn add_item(mut self, selection_name: &str, item: T) -> Self {
-        self.selection_list.push((String::from(selection_name), item));
+        let item = Item::<T> {
+            message: String::from(selection_name),
+            value: item,
+            selected: false,
+        };
+
+        self.selection_list.push(item);
         self
     }
 
-    pub fn render(mut self) -> Result<T, InqueryMessage> {
+    pub fn render(mut self) -> Result<Vec<T>, InqueryMessage> {
         if !self.term_data.enable_raw() {
             return Err(InqueryMessage::TermEnableRawErr);
         }
@@ -33,6 +44,8 @@ impl<T> List<T> {
             .text(&self.message)
             .cursor().save()
             .cursor().hide()
+            .color().fg().gray()
+            .text(" Press 'a' to accept selection")
             .println();
         let mut selected_index = 0;
 
@@ -58,16 +71,16 @@ impl<T> List<T> {
                         .style().bold()
                         .text("  →  ")
                         .reset_attributes()
-                        .text(&self.selection_list[i].0)
                         .print();
+
+                    CheckboxList::render_item(&self.selection_list[i]);
                     continue
                 }
 
                 AnsiBuilder::new().text("    ")
-                    .color().fg().gray()
-                    .text(&self.selection_list[i].0)
-                    .reset_attributes()
                     .print();
+
+                CheckboxList::render_item(&self.selection_list[i]);
             }
 
             match stdout().lock().flush() {
@@ -83,22 +96,39 @@ impl<T> List<T> {
                     selected_index += 1;
                 },
                 Keys::Enter => {
-                    let (name, value) = self.selection_list
-                        .remove(selected_index);
+                    self.selection_list[selected_index].selected =
+                        !self.selection_list[selected_index].selected;
+                }
+                Keys::A => {
+                    let mut selected_items = Vec::new();
+                    let mut selected_names = String::new();
+
+                    let mut i = 0;
+                    while i < self.selection_list.len() {
+                        if !self.selection_list[i].selected {
+                            i += 1;
+                            continue
+                        }
+
+                        selected_names.push_str(&(self.selection_list[i].message.clone() + ", "));
+                        selected_items.push(self.selection_list.remove(i).value);
+                    }
+
+                    selected_names.pop();
+                    selected_names.pop();
 
                     AnsiBuilder::new()
                         .cursor().restore()
                         .color().fg().blue()
-                        .text(&format!(" {}", name))
+                        .text(&format!(" {}", selected_names))
                         .reset_attributes()
-                        .println()
                         .cursor().save()
                         .erase_in_display(EraseMode::CursorToEnd)
                         .cursor().restore()
                         .cursor().show()
-                        .print();
+                        .println();
 
-                    return Ok(value)
+                    return Ok(selected_items)
                 },
                 Keys::CtrlC | Keys::CtrlZ => {
                     AnsiBuilder::new()
@@ -118,6 +148,30 @@ impl<T> List<T> {
                 _ => {/* we do nothing and proceed with loop */}
             }
         }
+    }
+
+    fn render_item(item: &Item<T>) {
+        if item.selected {
+            AnsiBuilder::new()
+                .text("[")
+                .color().fg().bright_green()
+                .text("✓")
+                .reset_attributes()
+                .text("] ")
+                .text(&item.message)
+                .print();
+            return
+        }
+
+        AnsiBuilder::new()
+            .text("[")
+            .color().fg().bright_red()
+            .text("✘")
+            .reset_attributes()
+            .text("] ")
+            .text(&item.message)
+            .print();
+        
     }
 }
 

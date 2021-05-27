@@ -1,10 +1,19 @@
+mod checkbox_list;
 mod list;
 mod term_data;
 
+pub use checkbox_list::CheckboxList as CheckboxList;
 pub use list::List as List;
-pub use list::ListErr as ListErr;
+
+pub enum InqueryMessage {
+    CloseRequested,
+    FlushLockErr,
+    TermDisableRawErr,
+    TermEnableRawErr,
+}
 
 pub enum Keys {
+    A,
     Up,
     Down,
     Left,
@@ -46,7 +55,8 @@ impl From<Stdin> for Keys {
                     _ => Self::Unhandled(data)
                 }
 
-            }
+            },
+            97 => Self::A,
             _ => Self::Unhandled(data)
         }
     }
