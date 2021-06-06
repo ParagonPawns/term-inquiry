@@ -1,6 +1,6 @@
 [package]
 name = "term-inquiry"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Diego-Henriquez <diego@paragonpawns.com>"]
 edition = "2018"
 license = "MIT"
@@ -20,7 +20,7 @@ windows = "0.10.0"
 termios = "0.3.3"
 
 [dependencies]
-ansi-builder = "0.1.5"
+ansi-builder = "0.1.6"
 
 [[example]]
 name = "list"

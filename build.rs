@@ -6,6 +6,7 @@ fn main() {
         },
         Windows::Win32::System::Console::{
             CONSOLE_MODE,
+            ENABLE_ECHO_INPUT,
             ENABLE_LINE_INPUT,
             ENABLE_PROCESSED_INPUT,
             ENABLE_VIRTUAL_TERMINAL_INPUT,
