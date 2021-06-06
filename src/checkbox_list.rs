@@ -30,9 +30,9 @@ impl<T> CheckboxList<T> {
         self
     }
 
-    pub fn render(mut self) -> Result<Vec<T>, InqueryMessage> {
+    pub fn inquire(mut self) -> Result<Vec<T>, InquiryMessage> {
         if !self.term_data.enable_raw() {
-            return Err(InqueryMessage::TermEnableRawErr);
+            return Err(InquiryMessage::TermEnableRawErr);
         }
 
         AnsiBuilder::new()
@@ -85,7 +85,7 @@ impl<T> CheckboxList<T> {
 
             match stdout().lock().flush() {
                 Ok(..) => {},
-                Err(..) => return Err(InqueryMessage::FlushLockErr)
+                Err(..) => return Err(InquiryMessage::FlushLockErr)
             };
 
             let key = Keys::from(stdin());
@@ -136,10 +136,10 @@ impl<T> CheckboxList<T> {
                         .print();
 
                     if !self.term_data.disable_raw() {
-                        return Err(InqueryMessage::TermDisableRawErr)
+                        return Err(InquiryMessage::TermDisableRawErr)
                     }
 
-                    return Err(InqueryMessage::CloseRequested)
+                    return Err(InquiryMessage::CloseRequested)
                 },
                  // Uncomment to view missing key data that is not handled.
                  // Keys::Unhandled(data) => {
@@ -171,7 +171,6 @@ impl<T> CheckboxList<T> {
             .text("] ")
             .text(&item.message)
             .print();
-        
     }
 }
 
@@ -179,4 +178,4 @@ use std::io::{ Write, stdin, stdout };
 
 use ansi_builder::{ AnsiBuilder, ClearMode, EraseMode };
 
-use crate::{ InqueryMessage, Keys, term_data::TermData };
+use crate::{ InquiryMessage, Keys, term_data::TermData };

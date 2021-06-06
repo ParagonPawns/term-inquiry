@@ -10,9 +10,17 @@ description = "Quick and easy way to make terminal inquiries using builder patte
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-ansi-builder = "0.1.3"
+[target.'cfg(windows)'.dependencies]
+windows = "0.10.0"
+
+[target.'cfg(windows)'.build-dependencies]
+windows = "0.10.0"
+
+[target.'cfg(unix)'.dependencies]
 termios = "0.3.3"
+
+[dependencies]
+ansi-builder = "0.1.5"
 
 [[example]]
 name = "list"

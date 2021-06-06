@@ -1,3 +1,62 @@
+#[cfg(windows)]
+pub struct TermData {
+    std_handle: HANDLE,
+    original_mode: CONSOLE_MODE,
+}
+
+#[cfg(windows)]
+impl TermData {
+    pub fn new() -> Self {
+        Self {
+            std_handle: HANDLE(stdin().as_raw_handle() as isize),
+            original_mode: CONSOLE_MODE::default(),
+        }
+    }
+
+    pub fn enable_raw(&mut self) -> bool {
+        unsafe {
+            if !GetConsoleMode(self.std_handle, &mut self.original_mode).as_bool() {
+                return false
+            }
+
+            let mut current_mode = self.original_mode | ENABLE_VIRTUAL_TERMINAL_INPUT;
+            current_mode &= CONSOLE_MODE(!(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT).0);
+            if !SetConsoleMode(self.std_handle, current_mode).as_bool() {
+                let error = GetLastError();
+                println!("Error - {:?}", error);
+                return false
+            }
+        }
+        true
+    }
+
+    pub fn disable_raw(&self) -> bool {
+        unsafe {
+            if !SetConsoleMode(self.std_handle, self.original_mode).as_bool() {
+                return false
+            }
+        }
+        true
+    }
+}
+
+#[cfg(windows)]
+use crate::Windows::Win32::System::{
+    Diagnostics::Debug::GetLastError,
+    Console::{
+        CONSOLE_MODE,
+        ENABLE_LINE_INPUT,
+        ENABLE_PROCESSED_INPUT,
+        ENABLE_VIRTUAL_TERMINAL_INPUT,
+        GetConsoleMode,
+        SetConsoleMode
+    },
+    SystemServices::HANDLE,
+};
+
+#[cfg(windows)]
+use std::os::windows::io::AsRawHandle;
+
 #[cfg(unix)]
 pub struct TermData {
     fd: RawFd,
@@ -45,7 +104,7 @@ impl TermData {
 #[cfg(unix)]
 use std::os::unix::io::{ AsRawFd, RawFd };
 
-use std::io::stdin;
-
 #[cfg(unix)]
 use termios::*;
+
+use std::io::stdin;

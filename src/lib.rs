@@ -2,10 +2,13 @@ mod checkbox_list;
 mod list;
 mod term_data;
 
+#[cfg(windows)]
+::windows::include_bindings!();
+
 pub use checkbox_list::CheckboxList as CheckboxList;
 pub use list::List as List;
 
-pub enum InqueryMessage {
+pub enum InquiryMessage {
     CloseRequested,
     FlushLockErr,
     TermDisableRawErr,
@@ -38,6 +41,9 @@ impl From<Stdin> for Keys {
         match data[0] {
             3 => Self::CtrlC,
             26 => Self::CtrlZ,
+            #[cfg(windows)]
+            13 => Self::Enter,
+            #[cfg(unix)]
             10 => Self::Enter,
             27 => {
                 if bytes_read == 0 {

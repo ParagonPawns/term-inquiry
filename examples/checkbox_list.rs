@@ -3,13 +3,13 @@ fn main() {
         .add_item("Option 1", "version 2.4")
         .add_item("Option 2", "version 2.5")
         .add_item("Option 3", "version 2.6")
-        .render();
+        .inquire();
 
     match result {
         Ok(..) => {},
         Err(error) => {
             match error {
-                InqueryMessage::CloseRequested => return,
+                InquiryMessage::CloseRequested => return,
                 _ => panic!(
                     "There was an other error encoutered that shouldn't \
                     happen."
@@ -19,4 +19,4 @@ fn main() {
     }
 }
 
-use term_menu::{ CheckboxList, InqueryMessage };
+use term_inquiry::{ CheckboxList, InquiryMessage };
