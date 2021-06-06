@@ -5,7 +5,7 @@ projecte is still a work in progress.
 ## Supported Platforms
  * Linux
  * OSX
- * Windows
+ * Windows (tested on Windows 10)
 
 ## Inquiry Types
 All inquiry types will have an example in the `examples` folder. So feel free
