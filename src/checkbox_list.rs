@@ -1,17 +1,17 @@
-struct Item<T> {
-    message: String,
+struct Item<'a, T> {
+    message: &'a str,
     value: T,
     selected: bool,
 }
 
-pub struct CheckboxList<T> {
-    message: String,
-    selection_list: Vec<Item<T>>,
+pub struct CheckboxList<'a, T> {
+    message: &'a str,
+    selection_list: Vec<Item<'a, T>>,
     term_data: TermData,
 }
 
-impl<T> CheckboxList<T> {
-    pub fn new(message: String) -> Self {
+impl<'a, T> CheckboxList<'a, T> {
+    pub fn new(message: &'a str) -> Self {
         Self {
             message,
             selection_list: Vec::new(),
@@ -19,9 +19,9 @@ impl<T> CheckboxList<T> {
         }
     }
 
-    pub fn add_item(mut self, selection_name: &str, item: T) -> Self {
+    pub fn add_item(mut self, selection_name: &'a str, item: T) -> Self {
         let item = Item::<T> {
-            message: String::from(selection_name),
+            message: selection_name,
             value: item,
             selected: false,
         };
@@ -122,7 +122,8 @@ impl<T> CheckboxList<T> {
                             continue;
                         }
 
-                        selected_names.push_str(&(self.selection_list[i].message.clone() + ", "));
+                        selected_names.push_str(self.selection_list[i].message);
+                        selected_names.push_str(", ");
                         selected_items.push(self.selection_list.remove(i).value);
                     }
 

@@ -1,5 +1,5 @@
 fn main() {
-    let result = List::<&'static str>::new(String::from("Please select an option:"))
+    let result = List::<&'static str>::new("Please select an option:")
         .add_item("Option 1", "version 2.4")
         .add_item("Option 2", "version 2.5")
         .add_item("Option 3", "version 2.6")

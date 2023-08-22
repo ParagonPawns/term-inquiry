@@ -1,11 +1,11 @@
-pub struct List<T> {
-    message: String,
-    selection_list: Vec<(String, T)>,
+pub struct List<'a, T> {
+    message: &'a str,
+    selection_list: Vec<(&'a str, T)>,
     term_data: TermData,
 }
 
-impl<T> List<T> {
-    pub fn new(message: String) -> Self {
+impl<'a, T> List<'a, T> {
+    pub fn new(message: &'a str) -> Self {
         Self {
             message,
             selection_list: Vec::new(),
@@ -13,9 +13,8 @@ impl<T> List<T> {
         }
     }
 
-    pub fn add_item(mut self, selection_name: &str, item: T) -> Self {
-        self.selection_list
-            .push((String::from(selection_name), item));
+    pub fn add_item(mut self, selection_name: &'a str, item: T) -> Self {
+        self.selection_list.push((selection_name, item));
         self
     }
 
