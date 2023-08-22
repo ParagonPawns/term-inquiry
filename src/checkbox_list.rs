@@ -146,6 +146,10 @@ impl<T> CheckboxList<T> {
                         .show()
                         .println();
 
+                    if !self.term_data.disable_raw() {
+                        return Err(InquiryMessage::TermDisableRawErr);
+                    }
+
                     return Ok(selected_items);
                 }
                 Keys::CtrlC | Keys::CtrlZ => {

@@ -117,6 +117,10 @@ impl<T> List<T> {
                         .show()
                         .print();
 
+                    if !self.term_data.disable_raw() {
+                        return Err(InquiryMessage::TermDisableRawErr);
+                    }
+
                     return Ok(value);
                 }
                 Keys::CtrlC | Keys::CtrlZ => {
