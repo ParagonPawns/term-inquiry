@@ -33,7 +33,7 @@ output
 ### CheckboxList
 Provides a list of check boxes (multiple choise) with a given message.
 ```rust
-CheckboxList::<&'static str>::new(String::from("Please select an option:"))
+CheckboxList::<&'static str>::new("Please select an option:")
     .add_item("Option 1", "value1")
     .add_item("Option 2", "value2")
     .add_item("Option 3", "value3")
