@@ -6,17 +6,15 @@ fn main() {
         .inquire();
 
     match result {
-        Ok(..) => {},
-        Err(error) => {
-            match error {
-                InquiryMessage::CloseRequested => return,
-                _ => panic!(
-                    "There was an other error encoutered that shouldn't \
+        Ok(..) => {}
+        Err(error) => match error {
+            InquiryMessage::CloseRequested => return,
+            _ => panic!(
+                "There was an other error encoutered that shouldn't \
                     happen."
-                )
-            }
-        }
+            ),
+        },
     }
 }
 
-use term_inquiry::{ CheckboxList, InquiryMessage };
+use term_inquiry::{CheckboxList, InquiryMessage};

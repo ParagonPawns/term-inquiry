@@ -7,16 +7,14 @@ fn main() {
 
     match result {
         Ok(data) => println!("Option was selected got data: {}.", data),
-        Err(error) => {
-            match error {
-                InquiryMessage::CloseRequested => return,
-                _ => panic!(
-                    "There was an other error encoutered that shouldn't \
+        Err(error) => match error {
+            InquiryMessage::CloseRequested => return,
+            _ => panic!(
+                "There was an other error encoutered that shouldn't \
                     happen."
-                )
-            }
-        }
+            ),
+        },
     }
 }
 
-use term_inquiry::{ List, InquiryMessage };
+use term_inquiry::{InquiryMessage, List};
